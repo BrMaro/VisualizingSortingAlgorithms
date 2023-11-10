@@ -4,7 +4,7 @@ import random
 from BubbleSort import bubble_sort
 from SelectionSort import selection_sort
 from InsertionSort import insertion_sort
-from MergeSort import merge_sort
+
 WIDTH, HEIGHT = 1200, 900
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Bubble Sort in Action")
@@ -34,43 +34,76 @@ def is_moved(num):
 def gen_array(n):
     array = []
     for _ in range(n):
-        array.append(random.randint(1, 200))
+        array.append(random.randint(1, 500))
     return array
 
 
-def draw_window(a):
+def single_draw(a):
     WIN.fill(BLACK)
-    pygame.draw.line(WIN, WHITE, (40, HEIGHT - 50), (WIDTH - 30, HEIGHT - 50), 5)  # y axis
-    pygame.draw.line(WIN, WHITE, (50, 50), (50, HEIGHT - 40), 5)  # x axis
+    pygame.draw.line(WIN, WHITE, (40, HEIGHT - 50), (WIDTH - 30, HEIGHT - 50), 5)  # x axis
+    pygame.draw.line(WIN, WHITE, (40, 40), (40, HEIGHT - 40), 5)  # y axis
     for number in range(len(a)):
-        NUM_BAR = a[number] * 400 // max(a)
-        bar_width = 800 // (2 * len(a))
+        NUM_BAR = a[number] * (HEIGHT - 70) // max(a)
+        bar_width = WIDTH // (2 * len(a))
         space_width = bar_width * 1.5
         pygame.draw.line(WIN, GREY, (50 + space_width * (number + 1), HEIGHT - 50),
                          (50 + space_width * (number + 1), HEIGHT - NUM_BAR - 50), bar_width)
-        # print(a,number)
+
+    pygame.display.update()
+
+
+def double_draw(a1, a2):
+    WIN.fill(BLACK)
+    pygame.draw.line(WIN, WHITE, (40, 40), (40, HEIGHT - 40), 5)  # y axis
+    pygame.draw.line(WIN, WHITE, (40, HEIGHT // 2), (WIDTH - 30, HEIGHT // 2), 5)  # x axis in the middle of screen
+
+    for number in range(len(a1)):
+        a1_NUM_BAR = a1[number] * (HEIGHT - 70) // 2 // max(a1)
+        a2_NUM_BAR = a2[number] * (HEIGHT - 70) // 2 // max(a1)
+        bar_width = WIDTH // (2 * len(a1))
+        space_width = bar_width * 1.5
+        pygame.draw.line(WIN, WHITE, (50 + space_width * (number + 1), HEIGHT // 2), (50 + space_width * (number + 1),HEIGHT//2-a1_NUM_BAR),bar_width)
+        pygame.draw.line(WIN, WHITE, (50 + space_width * (number + 1), HEIGHT // 2), (50 + space_width * (number + 1),HEIGHT//2+a2_NUM_BAR),bar_width)
 
     pygame.display.update()
 
 
 def main():
-    a = gen_array(200)
+    a = gen_array(100)
+    b = a.copy()
     clock = pygame.time.Clock()
     run = True
-    sorting_generator = selection_sort(a)
+    sorting_generator1 = selection_sort(a)
+    sorting_generator2 = insertion_sort(b)
+
+    generator1_finished = False
+    generator2_finished = False
     while run:
         clock.tick(FPS)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
 
-        draw_window(a)
+        double_draw(a, b)
+
+
+        #Break out of loop only when both arrays are finihsed sorting
+        try:
+            a = next(sorting_generator1)
+        except StopIteration:
+            generator1_finished = True
+            print("Selection")
 
         try:
-            a = next(sorting_generator)
+            b = next(sorting_generator2)
         except StopIteration:
-            time.sleep(1)
+            generator2_finished = True
+            print("Insertion")
+
+        if generator1_finished and generator2_finished:
+            time.sleep(2)
             run = False
+
 
     pygame.quit()
 
