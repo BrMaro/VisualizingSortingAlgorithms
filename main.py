@@ -6,9 +6,9 @@ from SelectionSort import selection_sort
 from InsertionSort import insertion_sort
 from BogoSort import bogo_sort
 
-WIDTH, HEIGHT = 1200, 900
-WIN = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Bubble Sort in Action")
+WIDTH, HEIGHT = 1800, 1000
+# WIN = pygame.display.set_mode((WIDTH, HEIGHT))
+# pygame.display.set_caption("Bubble Sort in Action")
 FPS = 100
 
 GREEN = (0, 255, 0)
@@ -39,33 +39,33 @@ def gen_array(n):
     return array
 
 
-def single_draw(a):
-    WIN.fill(BLACK)
-    pygame.draw.line(WIN, WHITE, (40, HEIGHT - 50), (WIDTH - 30, HEIGHT - 50), 5)  # x axis
-    pygame.draw.line(WIN, WHITE, (40, 40), (40, HEIGHT - 40), 5)  # y axis
+def single_draw(win,a):
+    win.fill(BLACK)
+    pygame.draw.line(win, WHITE, (40, HEIGHT - 50), (WIDTH - 30, HEIGHT - 50), 5)  # x axis
+    pygame.draw.line(win, WHITE, (40, 40), (40, HEIGHT - 40), 5)  # y axis
     for number in range(len(a)):
         NUM_BAR = a[number] * (HEIGHT - 70) // max(a)
         bar_width = WIDTH // (2 * len(a))
         space_width = 2
-        pygame.draw.line(WIN, WHITE, (50 + space_width * (number + 1), HEIGHT - 50),
+        pygame.draw.line(win, WHITE, (50 + space_width * (number + 1), HEIGHT - 50),
                          (50 + space_width * (number + 1), HEIGHT - NUM_BAR - 50), bar_width)
 
     pygame.display.update()
 
 
-def double_draw(a1, a2):
-    WIN.fill(BLACK)
-    pygame.draw.line(WIN, WHITE, (40, 40), (40, HEIGHT - 40), 5)  # y axis
-    pygame.draw.line(WIN, WHITE, (40, HEIGHT // 2), (WIDTH - 30, HEIGHT // 2), 5)  # x axis in the middle of screen
+def double_draw(win,a1, a2):
+    win.fill(BLACK)
+    pygame.draw.line(win, WHITE, (40, 40), (40, HEIGHT - 40), 5)  # y axis
+    pygame.draw.line(win, WHITE, (40, HEIGHT // 2), (WIDTH - 30, HEIGHT // 2), 5)  # x axis in the middle of screen
 
     for number in range(len(a1)):
         a1_NUM_BAR = a1[number] * (HEIGHT - 70) // 2 // max(a1)
         a2_NUM_BAR = a2[number] * (HEIGHT - 70) // 2 // max(a1)
         bar_width = WIDTH // (2 * len(a1))
         space_width = 2
-        pygame.draw.line(WIN, WHITE, (50 + space_width * (number + 1), HEIGHT // 2),
+        pygame.draw.line(win, WHITE, (50 + space_width * (number + 1), HEIGHT // 2),
                          (50 + space_width * (number + 1), HEIGHT // 2 - a1_NUM_BAR), bar_width)
-        pygame.draw.line(WIN, WHITE, (50 + space_width * (number + 1), HEIGHT // 2),
+        pygame.draw.line(win, WHITE, (50 + space_width * (number + 1), HEIGHT // 2),
                          (50 + space_width * (number + 1), HEIGHT // 2 + a2_NUM_BAR), bar_width)
 
     pygame.display.update()
@@ -80,6 +80,12 @@ def main():
         draw_mode = 'single'
 
     pygame.init()
+    pygame.init()
+    if draw_mode == 'double':
+        WIN = pygame.display.set_mode((WIDTH, HEIGHT // 2))
+    else:
+        WIN = pygame.display.set_mode((WIDTH, HEIGHT))
+    pygame.display.set_caption("Bubble Sort in Action")
 
     a = gen_array(num_numbers)
     b = a.copy()
@@ -99,10 +105,10 @@ def main():
                 run = False
 
         if draw_mode == 'double':
-            double_draw(a, b)
+            double_draw(WIN,a, b)
             pygame.display.set_caption("Double Draw")
         else:
-            single_draw(a)
+            single_draw(WIN,a)
             pygame.display.set_caption("Single Draw")
 
         try:
